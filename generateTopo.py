@@ -31,29 +31,11 @@ def distributeHosts(nSwitches, nHosts, hostBand, hostQueue, hostDelay, hostLoss)
     
     return hostOutput
 
-def generateMininetTopo(nHosts):
+def generateMininetTopo(net_topo,nHosts,hostBand,hostQueue,hostDelay,hostLoss):
     
-    # read config file
-    pathConf = "ConfigFiles/simulation_conf.json"
-
-    with open(pathConf, 'r') as confFile:
-        sim_conf =  confFile.read()
-
-    # parse file
-    sim_conf = json.loads(sim_conf)
-
-    # read topo file
-    pathTopoFile = "Topos/" + sim_conf["topology"]
-
-    with open(pathTopoFile, 'r') as topoFile:
-        net_topo =  topoFile.read()
-
-    # parse file
-    net_topo = json.loads(net_topo)
 
     # Creates a dictionary with full information about the topology
-    fullTopo = createOutDict(net_topo, nHosts, sim_conf["hostBand"], 
-                             sim_conf["hostQueue"], sim_conf["hostDelay"], sim_conf["hostLoss"])
+    fullTopo = createOutDict(net_topo,nHosts,hostBand,hostQueue,hostDelay,hostLoss)
     
     return fullTopo
 

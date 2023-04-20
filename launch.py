@@ -3,6 +3,7 @@
 from time import sleep
 from signal import SIGINT
 import json
+from subprocess import call
                                                                                              
 from mininet.topo import Topo
 from mininet.net import Mininet
@@ -34,6 +35,8 @@ class CustomTopo(Topo):
 
 def simpleTest():
 
+	call(["mn","-c"])
+
 	# Read input file
 	with open('ConfigFiles/input.json', 'r') as myfile:
 		data = myfile.read()
@@ -42,7 +45,26 @@ def simpleTest():
 
 	numberNodes = obj['parameters']['n']
 	
-	fullTopo = generateMininetTopo(numberNodes)
+	# Read simulation conf file
+	pathConf = "ConfigFiles/simulation_conf.json"
+
+	with open(pathConf, 'r') as confFile:
+		sim_conf =  confFile.read()
+
+	# parse file
+	sim_conf = json.loads(sim_conf)
+
+	# read topo file
+	pathTopoFile = "Topos/" + sim_conf["topology"]
+
+	with open(pathTopoFile, 'r') as topoFile:
+		net_topo =  topoFile.read()
+
+	# parse file
+	net_topo = json.loads(net_topo)
+	
+	fullTopo = generateMininetTopo(net_topo, numberNodes+1, sim_conf["hostBand"], 
+				sim_conf["hostQueue"], sim_conf["hostDelay"], sim_conf["hostLoss"])
 
 	"Create and test a simple network"
 	topo = CustomTopo(fullTopo)
@@ -72,20 +94,19 @@ def simpleTest():
 	for i in range(numberNodes):
 		# node execution code
 		nodeId = str(i)
-		cmd = "./node --input_file input.json --log_file outputs/process" + nodeId + ".txt --i " + nodeId + " --transactions 5 --transaction_init_timeout_ns 1000000000"
-		popens[hosts[i]] = hosts[i].popen(cmd)
+		cmd = "./node --input_file ConfigFiles/input.json --log_file outputs/process" + nodeId + ".txt --i " + nodeId + " --transactions 5 --transaction_init_timeout_ns 1000000000"
+		popens[hosts[i+1]] = hosts[i+1].popen(cmd)
 		#print(cmd)
 		
 	print("Simulation start... ")
-
-	sleep(60)
+	sleep(sim_conf["simulationTime"])
 	print("Simulation end... ")
 
 	for p in popens.values():
 		p.send_signal(SIGINT)
 	
 	sleep(10)
-
+	
 	print("The end")
 
 	net.stop()

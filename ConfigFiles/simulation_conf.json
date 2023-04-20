@@ -3,5 +3,6 @@
   "hostBand": 1,
   "hostQueue": 1000,
   "hostDelay": 100,
-  "hostLoss": 1
+  "hostLoss": 1,
+  "simulationTime": 30
 }
