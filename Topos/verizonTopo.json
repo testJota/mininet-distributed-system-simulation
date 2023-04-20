@@ -1,0 +1,117 @@
+{
+    "s0": null,
+    "s1": null,
+    "s2": null,
+    "s3": null,
+    "s4": {
+        "s2": {
+            "bw": 1000,
+            "delay": "85ms",
+            "loss": 0.0143,
+            "max_queue_size": 10000
+        }
+    },
+    "s5": {
+        "s4": {
+            "bw": 1000,
+            "delay": "147ms",
+            "loss": 0.0028,
+            "max_queue_size": 10000
+        }
+    },
+    "s6": null,
+    "s7": {
+        "s5": {
+            "bw": 1000,
+            "delay": "60ms",
+            "loss": 0.0042,
+            "max_queue_size": 10000
+        }
+    },
+    "s8": null,
+    "s9": {
+        "s7": {
+            "bw": 1000,
+            "delay": "49ms",
+            "loss": 0.0124,
+            "max_queue_size": 10000
+        }
+    },
+    "s10": null,
+    "s11": {
+        "s7": {
+            "bw": 1000,
+            "delay": "29ms",
+            "loss": 0.0228,
+            "max_queue_size": 10000
+        }
+    },
+    "s12": {
+        "s3": {
+            "bw": 1000,
+            "delay": "97ms",
+            "loss": 0.0032,
+            "max_queue_size": 10000
+        },
+        "s7": {
+            "bw": 1000,
+            "delay": "146ms",
+            "loss": 0.0093,
+            "max_queue_size": 10000
+        },
+        "s8": {
+            "bw": 1000,
+            "delay": "117ms",
+            "loss": 0.0048,
+            "max_queue_size": 10000
+        }
+    },
+    "s13": {
+        "s1": {
+            "bw": 1000,
+            "delay": "90ms",
+            "loss": 0.0012,
+            "max_queue_size": 10000
+        },
+        "s7": {
+            "bw": 1000,
+            "delay": "34ms",
+            "loss": 0.0006,
+            "max_queue_size": 10000
+        }
+    },
+    "s14": {
+        "s0": {
+            "bw": 1000,
+            "delay": "24ms",
+            "loss": 0.0007,
+            "max_queue_size": 10000
+        },
+        "s10": {
+            "bw": 1000,
+            "delay": "139ms",
+            "loss": 0.0029,
+            "max_queue_size": 10000
+        },
+        "s13": {
+            "bw": 1000,
+            "delay": "114ms",
+            "loss": 0.0021,
+            "max_queue_size": 10000
+        }
+    },
+    "s15": {
+        "s6": {
+            "bw": 1000,
+            "delay": "117ms",
+            "loss": 0.0085,
+            "max_queue_size": 10000
+        },
+        "s13": {
+            "bw": 1000,
+            "delay": "38ms",
+            "loss": 0.0006,
+            "max_queue_size": 10000
+        }
+    }
+}

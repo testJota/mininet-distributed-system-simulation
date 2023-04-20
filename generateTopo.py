@@ -1,15 +1,65 @@
-#!/usr/bin/python                                                                            
+#!/usr/bin/env python
+# coding: utf-8
+
 import json
-from topoCreation import createTopoFile
+import random
 
-if __name__ == '__main__':
+def createOutDict(netTopo, nHosts, hostBand, hostQueue, hostDelay, hostLoss):
     
-	# Read input file
-	with open('input.json', 'r') as myfile:
-		data = myfile.read()
-		
-	obj = json.loads(data)
+    ''' Creates a random distribution of hosts over the network topo'''
 
-	numberNodes = obj['parameters']['n'] + 1 # Including main server    
-	
-	createTopoFile(nHosts = numberNodes, netBand = 1000, hostDelay = '10ms', outFileName = 'networkTopo.json')
+    output = {}       
+    output["networks"] = netTopo
+    output["peers"] = distributeHosts(len(netTopo), nHosts, hostBand, hostQueue, hostDelay, hostLoss)
+    
+    return output
+
+def distributeHosts(nSwitches, nHosts, hostBand, hostQueue, hostDelay, hostLoss):
+    
+    hostOutput = {}
+    
+    for j in range(nHosts):
+        server = "s" + str(random.randrange(nSwitches))
+        host = "h" + str(j)
+        link = {
+            "bw": hostBand,
+            "delay": hostDelay,
+            "loss": hostLoss,
+            "max_queue_size": hostQueue
+        }
+        hostOutput[host] = {server: link}
+    
+    return hostOutput
+
+def generateMininetTopo(nHosts):
+    
+    # read config file
+    pathConf = "ConfigFiles/simulation_conf.json"
+
+    with open(pathConf, 'r') as confFile:
+        sim_conf =  confFile.read()
+
+    # parse file
+    sim_conf = json.loads(sim_conf)
+
+    # read topo file
+    pathTopoFile = "Topos/" + sim_conf["topology"]
+
+    with open(pathTopoFile, 'r') as topoFile:
+        net_topo =  topoFile.read()
+
+    # parse file
+    net_topo = json.loads(net_topo)
+
+    # Creates a dictionary with full information about the topology
+    fullTopo = createOutDict(net_topo, nHosts, sim_conf["hostBand"], 
+                             sim_conf["hostQueue"], sim_conf["hostDelay"], sim_conf["hostLoss"])
+    
+    return fullTopo
+
+    # Serializing json
+    #json_object = json.dumps(fullTopo, indent=4)
+
+    # Writing to sample.json
+    #with open("networkTopo.json", "w") as outfile:
+    #    outfile.write(json_object)

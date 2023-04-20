@@ -1,0 +1,5 @@
+Topology Creation - Verizon
+
+Network topology generation based on real data provided by Verizon in https://www.verizon.com/business/terms/latency/. (Data was fetched on Apr 19 2023).
+
+The files "latencyData.csv" and "dropData.csv" contain latency and message-drops information across Verizon sites.

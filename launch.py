@@ -11,18 +11,11 @@ from mininet.log import setLogLevel
 from mininet.node import CPULimitedHost
 from mininet.link import TCLink
 
-from topoCreation import createTopoFile
+from generateTopo import generateMininetTopo
 
 class CustomTopo(Topo):
 	"Single switch connected to n hosts."
-	def build(self, pathTopoFile):
-		
-		# read topo file
-		with open(pathTopoFile, 'r') as topoFile:
-			net_topo =  topoFile.read()
-			
-		# parse file
-		net_topo = json.loads(net_topo)
+	def build(self, net_topo):
 		
 		switches = {}
 		for net in net_topo['networks'].keys():
@@ -42,17 +35,17 @@ class CustomTopo(Topo):
 def simpleTest():
 
 	# Read input file
-	with open('input.json', 'r') as myfile:
+	with open('ConfigFiles/input.json', 'r') as myfile:
 		data = myfile.read()
 		
 	obj = json.loads(data)
 
-	numberNodes = obj['parameters']['n'] + 1 # Including main server
+	numberNodes = obj['parameters']['n']
 	
-	pathTopo = 'networkTopo.json'
+	fullTopo = generateMininetTopo(numberNodes)
 
 	"Create and test a simple network"
-	topo = CustomTopo(pathTopo)
+	topo = CustomTopo(fullTopo)
 	net = Mininet(topo, host=CPULimitedHost, link=TCLink)
 	net.start()
 
@@ -68,7 +61,7 @@ def simpleTest():
 	popens = {}
 
 	# server execution code
-	cmd = "./mainserver --n " + str(numberNodes-1) + " --log_file outputs/mainOut.txt"
+	cmd = "./mainserver --n " + str(numberNodes) + " --log_file outputs/mainOut.txt"
 	popens[hosts[0]] = hosts[0].popen(cmd)
 	print(cmd)
 
@@ -76,9 +69,9 @@ def simpleTest():
 
 	print( "Setting up nodes" )
 
-	for i in range(1,numberNodes):
+	for i in range(numberNodes):
 		# node execution code
-		nodeId = str(i-1)
+		nodeId = str(i)
 		cmd = "./node --input_file input.json --log_file outputs/process" + nodeId + ".txt --i " + nodeId + " --transactions 5 --transaction_init_timeout_ns 1000000000"
 		popens[hosts[i]] = hosts[i].popen(cmd)
 		#print(cmd)
