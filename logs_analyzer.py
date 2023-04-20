@@ -179,7 +179,7 @@ def get_histories_diff_metrics():
     return metrics
 
 
-input_file = open("input.json")
+input_file = open("ConfigFiles/input.json")
 input_json = json.load(input_file)
 protocol = input_json["protocol"]
 n = input_json["parameters"]["n"]
