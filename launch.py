@@ -94,7 +94,12 @@ def simpleTest():
 	for i in range(numberNodes):
 		# node execution code
 		nodeId = str(i)
-		cmd = "./node --input_file ConfigFiles/input.json --log_file outputs/process" + nodeId + ".txt --i " + nodeId + " --transactions 5 --transaction_init_timeout_ns 1000000000"
+		inputFile = "--input_file ConfigFiles/input.json"
+		logFile = "--log_file outputs/process" + nodeId + ".txt"
+		nTr = "--transactions " + str(sim_conf["numberTransactions"])
+		trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+		
+		cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay
 		popens[hosts[i+1]] = hosts[i+1].popen(cmd)
 		#print(cmd)
 		

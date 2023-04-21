@@ -4,5 +4,7 @@
   "hostQueue": 1000,
   "hostDelay": 100,
   "hostLoss": 1,
-  "simulationTime": 30
+  "simulationTime": 30,
+  "numberTransactions": 1,
+  "transactionDelay": 1000000000
 }
