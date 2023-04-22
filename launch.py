@@ -120,11 +120,27 @@ def simpleTest():
 		
 		cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay
 		popens[hosts[i+1]] = hosts[i+1].popen(cmd)
+	
+	offset = 0
+	hTestIn = net.get('h0')
+	hTestOut = net.get('h0')
+	if sim_conf["testNodes"]["inTestNodes"]:
+		hTestIn = net.get('h' + str(numberNodes+1))
+		hTestIn2 = net.get('h' + str(numberNodes+2))
+		hTestIn.cmd("ping " + hTestIn2.IP() + " > outputs/inControl.txt 2>&1 &")
+		offset += 2
+		
+	if sim_conf["testNodes"]["outTestNodes"]:
+		hTestOut = net.get('h' + str(numberNodes+1+offset))
+		hTestOut2 = net.get('h' + str(numberNodes+2+offset))
+		hTestOut.cmd("ping " + hTestOut2.IP() + " > outputs/outControl.txt 2>&1 &")
 		
 	print("Simulation start... ")
 	sleep(sim_conf["simulationTime"])
 	print("Simulation end... ")
 
+	hTestIn.cmd("kill %ping")
+	hTestOut.cmd("kill %ping")
 	for p in popens.values():
 		p.send_signal(SIGINT)
 	
