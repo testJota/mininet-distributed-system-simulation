@@ -1,10 +1,16 @@
 {
-  "topology": "verizonTopo.json",
-  "hostBand": 1,
-  "hostQueue": 1000,
-  "hostDelay": 100,
-  "hostLoss": 1,
+  "topology": "singleTopo.json",
+  "hostBand": 10,
+  "hostQueue": 10000,
+  "hostDelay": "25ms",
+  "hostLoss": 0,
   "simulationTime": 30,
-  "numberTransactions": 1,
-  "transactionDelay": 1000000000
+  "numberTransactions": 10,
+  "transactionDelay": 1000000000,
+  "testNodes": {
+  	"inTestNodes": false,
+  	"outTestNodes": true,
+  	"inTopoDelay": "25ms",
+  	"outTopoDelay": "25ms"
+  }
 }

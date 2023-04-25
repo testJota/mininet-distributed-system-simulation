@@ -8,7 +8,7 @@
     "wr": 1900.0,
     "vr": 1910.0,
     "u": 2,
-    "recovery_timeout": 10000000000,
+    "recovery_timeout": 30000000000,
     "node_id_size": 256,
     "number_of_bins": 16,
     "g_size": 4,
