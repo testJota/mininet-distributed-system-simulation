@@ -8,7 +8,7 @@
   "numberTransactions": 10,
   "transactionDelay": 1000000000,
   "testNodes": {
-  	"inTestNodes": true,
+  	"inTestNodes": false,
   	"outTestNodes": true,
   	"inTopoDelay": "25ms",
   	"outTopoDelay": "25ms"
