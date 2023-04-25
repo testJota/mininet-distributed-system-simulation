@@ -32,8 +32,8 @@ class CustomTopo(Topo):
 				self.addLink(peer, net_,**args)
 		
 		numberHosts = len(net_topo['peers'].keys())
+		numberSwitches = len(net_topo['networks'].keys())
 		if testNodes["inTestNodes"]:
-			numberSwitches = len(net_topo['networks'].keys())
 			testNode1 = "h" + str(numberHosts)
 			testNode2 = "h" + str(numberHosts+1)
 			testSwitch1 = "s0"
@@ -89,7 +89,7 @@ def simpleTest():
 
 	"Create and test a simple network"
 	topo = CustomTopo(fullTopo, sim_conf["testNodes"])
-	net = Mininet(topo, host=CPULimitedHost, link=TCLink)
+	net = Mininet(topo, link=TCLink)
 	net.start()
 	
 	print( "Dumping switch connections" )
