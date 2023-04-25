@@ -2,8 +2,9 @@
                                    
 from time import sleep
 from signal import SIGINT
-import json
 from subprocess import call
+import json
+import sys
                                                                                              
 from mininet.topo import Topo
 from mininet.net import Mininet
@@ -54,22 +55,19 @@ class CustomTopo(Topo):
 			self.addHost(testNode2)
 			self.addLink(testNode2,testSwitch,bw=.1,delay=testNodes["outTopoDelay"],loss=0,max_queue_size=100)
 		
-def simpleTest():
+def simpleTest(inputPath, configPath):
 
 	call(["mn","-c"])
 	
 	# Read input file
-	with open('ConfigFiles/input.json', 'r') as myfile:
+	with open(inputPath, 'r') as myfile:
 		data = myfile.read()
 		
 	obj = json.loads(data)
 
 	numberNodes = obj['parameters']['n']
-	
-	# Read simulation conf file
-	pathConf = "ConfigFiles/simulation_conf.json"
 
-	with open(pathConf, 'r') as confFile:
+	with open(configPath, 'r') as confFile:
 		sim_conf =  confFile.read()
 
 	# parse file
@@ -145,21 +143,31 @@ def simpleTest():
 		p.send_signal(SIGINT)
 	
 	sleep(10)
-	
-	print("The end")
-	
-	"""
-	print( "Setting up test nodes" )
-	h1 = net.get('h1')
-	h1.cmd("ping 10.0.0.1 > control.txt 2>&1 &")
-	sleep(10)
-	print( "Stopping test" )
-	h1.cmd("kill %ping")
-	"""
 
 	net.stop()
+	
+	print("Compressing outputs...")
+	firstName = inputPath.split("/")[-1]
+	lastName = configPath.split("/")[-1]
+	fileName = "outputs/" + firstName.split(".")[0] + lastName.split(".")[0] + ".tar.gz"
+	listFiles = ["tar","-czf",fileName,"outputs/mainOut.txt"]
+	if sim_conf["testNodes"]["inTestNodes"]:
+		listFiles.append("outputs/inControl.txt")
+	if sim_conf["testNodes"]["outTestNodes"]:
+		listFiles.append("outputs/outControl.txt")
+		
+	for i in range(numberNodes):
+		listFiles.append(f"outputs/process{i}.txt")
+		
+	# Compressing files
+	call(listFiles)
+	
+	print("The end")
 
 if __name__ == '__main__':
-    # Tell mininet to print useful information
-    setLogLevel('info')
-    simpleTest()
+	"""
+		Usage: sudo python3 launch.py inputPath configPath
+	"""
+	# Tell mininet to print useful information
+	setLogLevel('info')
+	simpleTest(sys.argv[1], sys.argv[2])

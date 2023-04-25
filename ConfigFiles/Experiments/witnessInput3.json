@@ -1,0 +1,15 @@
+{
+    "protocol": "reliable_accountability",
+    "parameters": {
+        "n": 32,
+        "f": 0,
+        "w": 32,
+        "v": 32,
+        "wr": 10,
+        "vr": 10,
+        "u": 17,
+        "recovery_timeout": 30000000000,
+        "node_id_size": 256,
+        "numberBins": 16
+    }
+}

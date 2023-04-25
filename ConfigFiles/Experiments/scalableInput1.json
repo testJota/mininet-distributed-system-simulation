@@ -1,0 +1,14 @@
+{
+    "protocol": "scalable",
+    "parameters": {
+        "n": 8,
+        "f": 0,
+        "g_size": 8,
+        "e_size": 8,
+        "r_size": 8,
+        "d_size": 8,
+        "e_threshold": 6,
+        "r_threshold": 6,
+        "d_threshold": 6
+    }
+}

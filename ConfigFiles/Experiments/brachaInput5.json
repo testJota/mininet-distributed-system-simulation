@@ -1,0 +1,7 @@
+{
+    "protocol": "bracha",
+    "parameters": {
+        "n": 128,
+        "f": 0
+    }
+}

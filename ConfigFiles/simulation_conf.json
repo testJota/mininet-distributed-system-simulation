@@ -4,8 +4,8 @@
   "hostQueue": 10000,
   "hostDelay": "25ms",
   "hostLoss": 0,
-  "simulationTime": 30,
-  "numberTransactions": 10,
+  "simulationTime": 10,
+  "numberTransactions": 1,
   "transactionDelay": 1000000000,
   "testNodes": {
   	"inTestNodes": false,
