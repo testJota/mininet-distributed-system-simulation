@@ -1,22 +1,14 @@
 {
-  "protocol": "bracha",
-  "parameters": {
-    "n": 4,
-    "f": 0,
-    "w": 4,
-    "v": 5,
-    "wr": 1900.0,
-    "vr": 1910.0,
-    "u": 2,
-    "recovery_timeout": 30000000000,
-    "node_id_size": 256,
-    "number_of_bins": 16,
-    "g_size": 4,
-    "e_size": 4,
-    "e_threshold": 3,
-    "r_size": 4,
-    "r_threshold": 3,
-    "d_size": 4,
-    "d_threshold": 3
-  }
+    "protocol": "scalable",
+    "parameters": {
+        "n": 8,
+        "f": 0,
+        "g_size": 8,
+        "e_size": 8,
+        "r_size": 8,
+        "d_size": 8,
+        "e_threshold": 6,
+        "r_threshold": 6,
+        "d_threshold": 6
+    }
 }

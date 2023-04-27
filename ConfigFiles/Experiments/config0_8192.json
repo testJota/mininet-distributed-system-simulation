@@ -3,14 +3,14 @@
     "hostBand": 10,
     "hostQueue": 10000,
     "hostDelay": "100ms",
-    "hostLoss": 0.1,
+    "hostLoss": 1,
     "testNodes": {
         "inTestNodes": false,
         "outTestNodes": true,
         "inTopoDelay": "25ms",
         "outTopoDelay": "25ms"
     },
-    "simulationTime": 180,
+    "simulationTime": 240,
     "numberTransactions": 245760,
     "transactionDelay": 488281
 }

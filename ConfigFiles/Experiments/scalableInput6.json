@@ -3,12 +3,12 @@
     "parameters": {
         "n": 256,
         "f": 0,
-        "g_size": 80,
-        "e_size": 80,
-        "r_size": 80,
-        "d_size": 80,
-        "e_threshold": 54,
-        "r_threshold": 54,
-        "d_threshold": 54
+        "g_size": 32,
+        "e_size": 32,
+        "r_size": 32,
+        "d_size": 32,
+        "e_threshold": 22,
+        "r_threshold": 22,
+        "d_threshold": 22
     }
 }

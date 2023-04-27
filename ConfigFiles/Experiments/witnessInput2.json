@@ -10,6 +10,6 @@
         "u": 9,
         "recovery_timeout": 30000000000,
         "node_id_size": 256,
-        "numberBins": 16
+        "number_of_Bins": 16
     }
 }

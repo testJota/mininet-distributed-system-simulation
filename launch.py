@@ -111,7 +111,7 @@ def simpleTest(inputPath, configPath):
 	
 		# node execution code
 		nodeId = str(i)
-		inputFile = "--input_file ConfigFiles/input.json"
+		inputFile = "--input_file " + inputPath
 		logFile = "--log_file outputs/process" + nodeId + ".txt"	
 		nTr = "--transactions " + str(sim_conf["numberTransactions"])
 		trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
