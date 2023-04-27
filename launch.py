@@ -101,7 +101,7 @@ def simpleTest(inputPath, configPath):
 	# server execution code
 	cmd = "./mainserver --n " + str(numberNodes) + " --log_file outputs/mainOut.txt"
 	popens[hosts[0]] = hosts[0].popen(cmd)
-	print(cmd)
+	print(inputPath + ", " + configPath)
 
 	sleep(.1) # time to setup main server
 
@@ -149,7 +149,7 @@ def simpleTest(inputPath, configPath):
 	print("Compressing outputs...")
 	firstName = inputPath.split("/")[-1]
 	lastName = configPath.split("/")[-1]
-	fileName = "outputs/" + firstName.split(".")[0] + lastName.split(".")[0] + ".tar.gz"
+	fileName = "outputs/compressed/" + firstName.split(".")[0] + lastName.split(".")[0] + ".tar.gz"
 	listFiles = ["tar","-czf",fileName,"outputs/mainOut.txt"]
 	if sim_conf["testNodes"]["inTestNodes"]:
 		listFiles.append("outputs/inControl.txt")
