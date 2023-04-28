@@ -236,7 +236,7 @@ def get_histories_diff_metrics():
     return metrics
 
 
-input_file = open("input.json")
+input_file = open("ConfigFiles/input.json")
 input_json = json.load(input_file)
 protocol = input_json["protocol"]
 n = input_json["parameters"]["n"]
@@ -246,15 +246,15 @@ process_files(n)
 print(f"Protocol: {protocol}, {n} processes")
 print()
 
-min_message_latency, max_message_latency, avg_message_latency = calc_message_latencies()
+#min_message_latency, max_message_latency, avg_message_latency = calc_message_latencies()
 min_transaction_latency, max_transaction_latency, avg_transaction_latency, avg_messages_exchanged, throughput = \
     calc_transaction_stat()
 
-print("Message latencies:")
-print(f"\tMinimal: {min_message_latency / 1e9}")
-print(f"\tMaximal: {max_message_latency / 1e9}")
-print(f"\tAverage: {avg_message_latency / 1e9}")
-print()
+#print("Message latencies:")
+#print(f"\tMinimal: {min_message_latency / 1e9}")
+#print(f"\tMaximal: {max_message_latency / 1e9}")
+#print(f"\tAverage: {avg_message_latency / 1e9}")
+#print()
 
 print("Transaction latency statistics:")
 print(f"\tMinimal: {min_transaction_latency / 1e9}")

@@ -1,16 +1,16 @@
 {
     "topology": "singleTopo.json",
-    "hostBand": 10,
-    "hostQueue": 10000,
-    "hostDelay": "100ms",
-    "hostLoss": 1,
+    "hostBand": 2,
+    "hostQueue": 100000,
+    "hostDelay": "5ms",
+    "hostLoss": 2,
     "testNodes": {
         "inTestNodes": false,
         "outTestNodes": true,
         "inTopoDelay": "25ms",
         "outTopoDelay": "25ms"
     },
-    "simulationTime": 240,
-    "numberTransactions": 960,
+    "simulationTime": 120,
+    "numberTransactions": 480,
     "transactionDelay": 125000000
 }

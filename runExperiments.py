@@ -6,7 +6,7 @@ if __name__ == '__main__':
 	
 	protocols = ["bracha","witness","scalable"]
 	numberExp = 3
-	targetThr = [2**(4+i) for i in range(10)]
+	targetThr = [2**(4+i) for i in range(6)]
 	
 	for i in range(numberExp):
 		for protocol in protocols:

@@ -8,7 +8,7 @@
         "wr": 10,
         "vr": 10,
         "u": 19,
-        "recovery_timeout": 30000000000,
+        "recovery_timeout": 10000000000,
         "node_id_size": 256,
         "number_of_Bins": 16
     }

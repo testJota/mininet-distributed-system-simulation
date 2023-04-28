@@ -3,6 +3,7 @@
 from time import sleep
 from signal import SIGINT
 from subprocess import call
+#import threading
 import json
 import sys
                                                                                              
@@ -10,7 +11,7 @@ from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.util import dumpNodeConnections
 from mininet.log import setLogLevel
-from mininet.node import CPULimitedHost
+#from mininet.node import CPULimitedHost
 from mininet.link import TCLink
 
 from generateTopo import generateMininetTopo
@@ -25,7 +26,8 @@ class CustomTopo(Topo):
 				for net_ in net_topo['networks'][net].keys():
 					args = net_topo['networks'][net][net_]
 					self.addLink(net, net_,**args)
-				
+		
+		#n = len(net_topo['peers'].keys())
 		for peer in net_topo['peers'].keys():
 			self.addHost(peer)
 			for net_ in net_topo['peers'][peer].keys():
@@ -54,6 +56,33 @@ class CustomTopo(Topo):
 			self.addLink(testNode1,testSwitch,bw=.1,delay=testNodes["outTopoDelay"],loss=0,max_queue_size=100)
 			self.addHost(testNode2)
 			self.addLink(testNode2,testSwitch,bw=.1,delay=testNodes["outTopoDelay"],loss=0,max_queue_size=100)
+
+"""			
+class FloodThread(Thread):
+    def __init__(self, hn, cmd):
+        self.hostnum = hn
+        self.cmd = cmd
+        Thread.__init__(self)
+    def run(self):
+        i = int(self.hn[1:])
+        hn.cmd(self.cmd)
+
+class StoppableThread(threading.Thread):
+
+    def __init__(self,  hn, cmd):
+        super(StoppableThread, self).__init__(*args, **kwargs)
+        self._stop_event = threading.Event()
+        self.hostnum = hn
+        self.cmd = cmd
+        threading.Thread.__init__(self)
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()
+
+"""
 		
 def simpleTest(inputPath, configPath):
 
@@ -97,9 +126,12 @@ def simpleTest(inputPath, configPath):
 	hosts = net.hosts
 
 	popens = {}
+	#threads = []
 
 	# server execution code
 	cmd = "./mainserver --n " + str(numberNodes) + " --log_file outputs/mainOut.txt"
+	#thread = FloodThread(hosts[0],cmd)
+	#threads.append(thread)
 	popens[hosts[0]] = hosts[0].popen(cmd)
 	print(inputPath + ", " + configPath)
 
@@ -117,6 +149,9 @@ def simpleTest(inputPath, configPath):
 		trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
 		
 		cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay
+		
+		#thread = FloodThread(hosts[i+1],cmd)
+		#threads.append(thread)
 		popens[hosts[i+1]] = hosts[i+1].popen(cmd)
 	
 	offset = 0
