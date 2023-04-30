@@ -197,6 +197,7 @@ def simpleTest(inputPath, configPath):
 		listFiles.append("outputs/inControl.txt")
 	if sim_conf["testNodes"]["outTestNodes"]:
 		listFiles.append("outputs/outControl.txt")
+	listFiles.append("outputs/selfControl.txt")
 		
 	for i in range(numberNodes):
 		listFiles.append(f"outputs/process{i}.txt")
