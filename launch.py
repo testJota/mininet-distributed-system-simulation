@@ -27,12 +27,13 @@ class CustomTopo(Topo):
 					args = net_topo['networks'][net][net_]
 					self.addLink(net, net_,**args)
 		
-		#n = len(net_topo['peers'].keys())
+		n = len(net_topo['peers'].keys())
 		for peer in net_topo['peers'].keys():
+			#self.addHost(peer,cpu=.1/n)
 			self.addHost(peer)
 			for net_ in net_topo['peers'][peer].keys():
 				args = net_topo['peers'][peer][net_]
-				self.addLink(peer, net_,**args)
+				self.addLink(peer, net_,**args, use_htb=True)
 		
 		numberHosts = len(net_topo['peers'].keys())
 		numberSwitches = len(net_topo['networks'].keys())
@@ -116,6 +117,7 @@ def simpleTest(inputPath, configPath):
 
 	"Create and test a simple network"
 	topo = CustomTopo(fullTopo, sim_conf["testNodes"])
+	#net = Mininet(topo, host=CPULimitedHost, link=TCLink)
 	net = Mininet(topo, link=TCLink)
 	net.start()
 	
@@ -154,6 +156,10 @@ def simpleTest(inputPath, configPath):
 		#threads.append(thread)
 		popens[hosts[i+1]] = hosts[i+1].popen(cmd)
 	
+	# CPU test node, allow checking if nodes are getting enough CPU time
+	selfTest = hosts[1]
+	selfTest.cmd("bash selfControl.sh > outputs/selfControl.txt 2>&1 &")
+	
 	offset = 0
 	hTestIn = net.get('h0')
 	hTestOut = net.get('h0')
@@ -172,6 +178,7 @@ def simpleTest(inputPath, configPath):
 	sleep(sim_conf["simulationTime"])
 	print("Simulation end... ")
 
+	selfTest.cmd("kill %bash")
 	hTestIn.cmd("kill %ping")
 	hTestOut.cmd("kill %ping")
 	for p in popens.values():
