@@ -9,6 +9,7 @@
         "d_size": 36,
         "e_threshold": 25,
         "r_threshold": 25,
-        "d_threshold": 25
+        "d_threshold": 25,
+        "clean_up_timeout": 5000000000
     }
 }

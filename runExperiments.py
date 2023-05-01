@@ -4,11 +4,10 @@ from subprocess import call
 
 if __name__ == '__main__':
 	
-	#protocols = ["bracha","witness","scalable"]
-	protocols = ["bracha"]
-	initialExp = 2
-	finalExp = 3 # The last experiment is finalExp - 1
-	targetThr = [int((2**(1/2))**(4+i)) for i in range(10)]
+	protocols = ["bracha","witness","scalable"]
+	initialExp = 0
+	finalExp = 7 # The last experiment is finalExp - 1
+	targetThr = [int((2**(1/2))**(8+i)) for i in range(15)] #
 	
 	for th in targetThr:
 		for protocol in protocols:
