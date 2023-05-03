@@ -1,6 +1,7 @@
 #!/usr/bin/python                                                                            
-                                   
-from time import sleep
+     
+from time import time                   
+from time import sleep        
 from signal import SIGINT
 from subprocess import call
 #import threading
@@ -10,9 +11,10 @@ import sys
 from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.util import dumpNodeConnections
-from mininet.log import setLogLevel
+from mininet.log import setLogLevel, info
 #from mininet.node import CPULimitedHost
 from mininet.link import TCLink
+from mininet.util import pmonitor
 
 from generateTopo import generateMininetTopo
 
@@ -58,32 +60,6 @@ class CustomTopo(Topo):
 			self.addHost(testNode2)
 			self.addLink(testNode2,testSwitch,bw=.1,delay=testNodes["outTopoDelay"],loss=0,max_queue_size=100)
 
-"""			
-class FloodThread(Thread):
-    def __init__(self, hn, cmd):
-        self.hostnum = hn
-        self.cmd = cmd
-        Thread.__init__(self)
-    def run(self):
-        i = int(self.hn[1:])
-        hn.cmd(self.cmd)
-
-class StoppableThread(threading.Thread):
-
-    def __init__(self,  hn, cmd):
-        super(StoppableThread, self).__init__(*args, **kwargs)
-        self._stop_event = threading.Event()
-        self.hostnum = hn
-        self.cmd = cmd
-        threading.Thread.__init__(self)
-
-    def stop(self):
-        self._stop_event.set()
-
-    def stopped(self):
-        return self._stop_event.is_set()
-
-"""
 		
 def simpleTest(inputPath, configPath):
 
@@ -132,8 +108,6 @@ def simpleTest(inputPath, configPath):
 
 	# server execution code
 	cmd = "./mainserver --n " + str(numberNodes) + " --log_file outputs/mainOut.txt"
-	#thread = FloodThread(hosts[0],cmd)
-	#threads.append(thread)
 	popens[hosts[0]] = hosts[0].popen(cmd)
 	print(inputPath + ", " + configPath)
 
@@ -150,11 +124,9 @@ def simpleTest(inputPath, configPath):
 		nTr = "--transactions " + str(sim_conf["numberTransactions"])
 		trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
 		
-		cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay
-		
-		#thread = FloodThread(hosts[i+1],cmd)
-		#threads.append(thread)
-		popens[hosts[i+1]] = hosts[i+1].popen(cmd)
+		cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " 2>&1"
+
+		popens[hosts[i+1]] = hosts[i+1].popen(cmd, shell=True)
 	
 	# CPU test node, allow checking if nodes are getting enough CPU time
 	selfTest = hosts[1]
@@ -175,18 +147,28 @@ def simpleTest(inputPath, configPath):
 		hTestOut.cmd("ping " + hTestOut2.IP() + " > outputs/outControl.txt 2>&1 &")
 		
 	print("Simulation start... ")
-	sleep(sim_conf["simulationTime"])
+	info( "Monitoring output for", sim_conf["simulationTime"], "seconds\n" )
+	endTime = time() + sim_conf["simulationTime"]
+	for h, line in pmonitor( popens, timeoutms=100 ):
+		if h == hosts[1]:
+			info( '<%s>: %s' % ( h.name, line ) )
+		if time() >= endTime:
+			print("Sending termination signal...")
+			for p in popens.values():
+				p.send_signal( SIGINT )
+			break
+	#sleep(sim_conf["simulationTime"])
 	print("Simulation end... ")
 
 	selfTest.cmd("kill %bash")
 	hTestIn.cmd("kill %ping")
 	hTestOut.cmd("kill %ping")
-	for p in popens.values():
-		p.send_signal(SIGINT)
-	
+	#for p in popens.values():
+	#	p.send_signal(SIGINT)
 	sleep(10)
 
 	net.stop()
+	call(["mn","-c"])
 	
 	print("Compressing outputs...")
 	firstName = inputPath.split("/")[-1]
