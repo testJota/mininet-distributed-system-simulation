@@ -1,0 +1,13 @@
+{
+	"cpu": {
+		"cpuMax": 0.7
+	},
+	"memory": {
+		"memoryHigh": "3.5G",
+		"memoryMax": "4G"
+	},
+	"swap": {
+		"swapHigh": "0G",
+		"swapMax": "0G"
+	}
+}

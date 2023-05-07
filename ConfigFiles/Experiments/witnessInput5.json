@@ -3,11 +3,11 @@
     "parameters": {
         "n": 128,
         "f": 0,
-        "w": 28,
-        "v": 35,
+        "w": 21,
+        "v": 28,
         "wr": 10,
         "vr": 10,
-        "u": 15,
+        "u": 11,
         "recovery_timeout": 60000000000,
         "node_id_size": 256,
         "number_of_bins": 16
