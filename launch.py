@@ -13,7 +13,7 @@ from mininet.net import Mininet
 from mininet.util import dumpNodeConnections
 from mininet.log import setLogLevel, info
 #from mininet.node import CPULimitedHost
-from mininet.link import TCLink
+from mininet.link import TCULink
 from mininet.util import pmonitor
 
 from generateTopo import generateMininetTopo
@@ -35,7 +35,7 @@ class CustomTopo(Topo):
 			self.addHost(peer)
 			for net_ in net_topo['peers'][peer].keys():
 				args = net_topo['peers'][peer][net_]
-				self.addLink(peer, net_,**args, use_htb=True)
+				self.addLink(peer, net_,**args)
 		
 		numberHosts = len(net_topo['peers'].keys())
 		numberSwitches = len(net_topo['networks'].keys())
@@ -94,100 +94,106 @@ def simpleTest(inputPath, configPath):
 	"Create and test a simple network"
 	topo = CustomTopo(fullTopo, sim_conf["testNodes"])
 	#net = Mininet(topo, host=CPULimitedHost, link=TCLink)
-	net = Mininet(topo, link=TCLink)
-	net.start()
+	net = Mininet(topo, link=TCULink)
 	
-	print( "Dumping switch connections" )
-	dumpNodeConnections(net.switches)
-	
-	print( "Setting up main server" )
-	hosts = net.hosts
-
-	popens = {}
-	#threads = []
-
-	# server execution code
-	cmd = "./mainserver --n " + str(numberNodes) + " --log_file outputs/mainOut.txt"
-	popens[hosts[0]] = hosts[0].popen(cmd)
-	print(inputPath + ", " + configPath)
-
-	sleep(.1) # time to setup main server
-
-	print( "Setting up nodes" )
-
-	for i in range(numberNodes):
-	
-		# node execution code
-		nodeId = str(i)
-		inputFile = "--input_file " + inputPath
-		logFile = "--log_file outputs/process" + nodeId + ".txt"	
-		nTr = "--transactions " + str(sim_conf["numberTransactions"])
-		trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+	try:
+		net.start()
 		
-		cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " 2>&1"
+		print( "Dumping switch connections" )
+		dumpNodeConnections(net.switches)
+		
+		print( "Setting up main server" )
+		hosts = net.hosts
 
-		popens[hosts[i+1]] = hosts[i+1].popen(cmd, shell=True)
-	
-	# CPU test node, allow checking if nodes are getting enough CPU time
-	selfTest = hosts[1]
-	selfTest.cmd("bash selfControl.sh > outputs/selfControl.txt 2>&1 &")
-	
-	offset = 0
-	hTestIn = net.get('h0')
-	hTestOut = net.get('h0')
-	if sim_conf["testNodes"]["inTestNodes"]:
-		hTestIn = net.get('h' + str(numberNodes+1))
-		hTestIn2 = net.get('h' + str(numberNodes+2))
-		hTestIn.cmd("ping " + hTestIn2.IP() + " > outputs/inControl.txt 2>&1 &")
-		offset += 2
-		
-	if sim_conf["testNodes"]["outTestNodes"]:
-		hTestOut = net.get('h' + str(numberNodes+1+offset))
-		hTestOut2 = net.get('h' + str(numberNodes+2+offset))
-		hTestOut.cmd("ping " + hTestOut2.IP() + " > outputs/outControl.txt 2>&1 &")
-		
-	print("Simulation start... ")
-	info( "Monitoring output for", sim_conf["simulationTime"], "seconds\n" )
-	endTime = time() + sim_conf["simulationTime"]
-	for h, line in pmonitor( popens, timeoutms=100 ):
-		if h == hosts[1]:
-			info( '<%s>: %s' % ( h.name, line ) )
-		if time() >= endTime:
-			print("Sending termination signal...")
-			for p in popens.values():
-				p.send_signal( SIGINT )
-			break
-	#sleep(sim_conf["simulationTime"])
-	print("Simulation end... ")
+		popens = {}
+		#threads = []
 
-	selfTest.cmd("kill %bash")
-	hTestIn.cmd("kill %ping")
-	hTestOut.cmd("kill %ping")
-	#for p in popens.values():
-	#	p.send_signal(SIGINT)
-	sleep(10)
+		# server execution code
+		cmd = "./mainserver --n " + str(numberNodes) + " --log_file outputs/mainOut.txt"
+		popens[hosts[0]] = hosts[0].popen(cmd)
+		print(inputPath + ", " + configPath)
 
-	net.stop()
-	call(["mn","-c"])
-	
-	print("Compressing outputs...")
-	firstName = inputPath.split("/")[-1]
-	lastName = configPath.split("/")[-1]
-	fileName = "outputs/compressed/" + firstName.split(".")[0] + lastName.split(".")[0] + ".tar.gz"
-	listFiles = ["tar","-czf",fileName,"outputs/mainOut.txt"]
-	if sim_conf["testNodes"]["inTestNodes"]:
-		listFiles.append("outputs/inControl.txt")
-	if sim_conf["testNodes"]["outTestNodes"]:
-		listFiles.append("outputs/outControl.txt")
-	listFiles.append("outputs/selfControl.txt")
+		sleep(.1) # time to setup main server
+
+		print( "Setting up nodes" )
+
+		for i in range(numberNodes):
 		
-	for i in range(numberNodes):
-		listFiles.append(f"outputs/process{i}.txt")
+			# node execution code
+			nodeId = str(i)
+			inputFile = "--input_file " + inputPath
+			logFile = "--log_file outputs/process" + nodeId + ".txt"	
+			nTr = "--transactions " + str(sim_conf["numberTransactions"])
+			trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+			
+			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " 2>&1"
+
+			popens[hosts[i+1]] = hosts[i+1].popen(cmd, shell=True)
 		
-	# Compressing files
-	call(listFiles)
+		# CPU test node, allow checking if nodes are getting enough CPU time
+		#selfTest = hosts[1]
+		#selfTest.cmd("bash selfControl.sh > outputs/selfControl.txt 2>&1 &")
+		
+		offset = 0
+		hTestIn = net.get('h0')
+		hTestOut = net.get('h0')
+		if sim_conf["testNodes"]["inTestNodes"]:
+			hTestIn = net.get('h' + str(numberNodes+1))
+			hTestIn2 = net.get('h' + str(numberNodes+2))
+			hTestIn.cmd("ping " + hTestIn2.IP() + " > outputs/inControl.txt 2>&1 &")
+			offset += 2
+			
+		if sim_conf["testNodes"]["outTestNodes"]:
+			hTestOut = net.get('h' + str(numberNodes+1+offset))
+			hTestOut2 = net.get('h' + str(numberNodes+2+offset))
+			hTestOut.cmd("ping " + hTestOut2.IP() + " > outputs/outControl.txt 2>&1 &")
+			
+		print("Simulation start... ")
+		info( "Monitoring output for", sim_conf["simulationTime"], "seconds\n" )
+		endTime = time() + sim_conf["simulationTime"]
+		for h, line in pmonitor( popens, timeoutms=100 ):
+			if h:
+				info( '<%s>: %s' % ( h.name, line ) )
+			if time() >= endTime:
+				print("Sending termination signal...")
+				for p in popens.values():
+					p.send_signal( SIGINT )
+				break
+		#sleep(sim_conf["simulationTime"])
+		print("Simulation end... ")
+
+		#selfTest.cmd("kill %bash")
+		hTestIn.cmd("kill %ping")
+		hTestOut.cmd("kill %ping")
+		#for p in popens.values():
+		#	p.send_signal(SIGINT)
+		
+		net.stop()
+		
+	finally:
+		call("sudo pkill -f node", shell = True)
+		call("sudo pkill -f mainserver", shell = True)
+		call(["mn","-c"])
+		
+		print("Compressing outputs...")
+		firstName = inputPath.split("/")[-1]
+		lastName = configPath.split("/")[-1]
+		fileName = "outputs/compressed/" + firstName.split(".")[0] + lastName.split(".")[0] + ".tar.gz"
+		listFiles = ["tar","-czf",fileName,"outputs/mainOut.txt"]
+		if sim_conf["testNodes"]["inTestNodes"]:
+			listFiles.append("outputs/inControl.txt")
+		if sim_conf["testNodes"]["outTestNodes"]:
+			listFiles.append("outputs/outControl.txt")
+		listFiles.append("outputs/selfControl.txt")
+			
+		for i in range(numberNodes):
+			listFiles.append(f"outputs/process{i}.txt")
+			
+		# Compressing files
+		call(listFiles)
+
 	
-	print("The end")
+		print("The end")
 
 if __name__ == '__main__':
 	"""
