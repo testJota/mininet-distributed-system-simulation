@@ -5,13 +5,25 @@ from subprocess import call
 if __name__ == '__main__':
 	
 	protocols = ["bracha","witness","scalable"]
-	initialExp = 0
-	finalExp = 7 # The last experiment is finalExp - 1
-	targetThr = [int((2**(1/2))**(8+i)) for i in range(15)] #
+	#targetThr = [2*(i+1) for i in range(64)] #
+	targetN = [32, 64, 128]
+	numberExp = 8
+	dictFiles = {32:"3", 64:"4", 128:"5"}
 	
-	for th in targetThr:
-		for protocol in protocols:
-			for i in range(initialExp, finalExp):	
-				inputFile = "ConfigFiles/Experiments/" + protocol + "Input" + str(i) + ".json"
-				configFile = "ConfigFiles/Experiments/config" + str(i) + "_" + str(th) + ".json"
-				call(["python3", "launch.py", inputFile, configFile])
+	for nNodes in targetN:
+		for i in range(3):
+			for protocol in protocols:
+				inputFile = "ConfigFiles/Experiments/" + protocol + "Input" + dictFiles[nNodes] + ".json"
+				configFile = "ConfigFiles/Experiments/stress" + str(i) + ".json"
+				call(["python3", "launchMesh.py", inputFile, configFile])
+				
+	for nNodes in targetN:
+		step = (128//nNodes)*4
+		for _ in range(numberExp):
+			for protocol in protocols:
+				inputFile = "ConfigFiles/Experiments/" + protocol + "Input" + dictFiles[nNodes] + ".json"
+				configFile = "ConfigFiles/Experiments/config" + dictFiles[nNodes] + "_" + str(step) + ".json"
+				call(["python3", "launchMesh.py", inputFile, configFile])
+			step += step
+				
+
