@@ -10,6 +10,6 @@
         "e_threshold": 6,
         "r_threshold": 6,
         "d_threshold": 6,
-        "clean_up_timeout": 500000000
+        "clean_up_timeout": 10000000000
     }
 }
