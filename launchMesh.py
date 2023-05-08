@@ -297,10 +297,11 @@ def simpleTest(inputPath, configPath):
 			nodeId = str(i)
 			inputFile = "--input_file " + inputPath
 			logFile = "--log_file outputs/process" + nodeId + ".txt"	
-			nTr = "--transactions " + str(sim_conf["numberTransactions"])
-			trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+			#nTr = "--transactions " + str(sim_conf["numberTransactions"])
+			#trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
 			
-			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " 2>&1"
+			#cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " 2>&1"
+			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId  + " 2>&1"
 
 			popens[hosts[i+1]] = hosts[i+1].popen(cmd, shell=True)
 			
@@ -362,7 +363,7 @@ def simpleTest(inputPath, configPath):
 			listFiles.append("outputs/inControl.txt")
 		if sim_conf["testNodes"]["outTestNodes"]:
 			listFiles.append("outputs/outControl.txt")
-		listFiles.append("outputs/selfControl.txt")
+		#listFiles.append("outputs/selfControl.txt")
 			
 		for i in range(numberNodes):
 			listFiles.append(f"outputs/process{i}.txt")
