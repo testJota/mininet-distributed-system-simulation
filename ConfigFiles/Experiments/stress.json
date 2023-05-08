@@ -10,5 +10,7 @@
         "inTopoDelay": "25ms",
         "outTopoDelay": "25ms"
     },
-    "simulationTime": 180
+    "simulationTime": 250,
+    "numberTransactions": -1,
+    "transactionDelay": 180000000000
 }

@@ -92,7 +92,7 @@ def meshRules(nHosts, nSwitches):
 		for j in range(1,nHosts+1):
 			target = findSwitch(j,sRanges)
 			if target == i:
-				offset1 = hSwitches - 1
+				offset1 = nSwitches - 1
 				offset2 = j - hSwitches*i
 				position = offset1 + offset2 + offset0
 				cmd = f'ovs-ofctl add-flow {switch} table=0,idle_timeout=60,priority=100,dl_type=0x0800,nw_dst=10.0.0.{j+1},actions=output:"{switch}-eth{position}"'
@@ -246,9 +246,6 @@ def simpleTest(inputPath, configPath):
 	fullTopo, nSwitches = meshTopo(numberNodes, sim_conf["hostBand"], sim_conf["hostQueue"],
 				 sim_conf["hostDelay"], sim_conf["hostLoss"])
 
-	print("-------------------------------------------")
-	print(fullTopo)
-	print("-------------------------------------------")
 	"Create and test a simple network"
 	topo = CustomTopo(fullTopo, sim_conf["testNodes"])
 	#net = Mininet(topo, host=CPULimitedHost, link=TCLink)
@@ -296,13 +293,19 @@ def simpleTest(inputPath, configPath):
 			# node execution code
 			nodeId = str(i)
 			inputFile = "--input_file " + inputPath
-			logFile = "--log_file outputs/process" + nodeId + ".txt"	
-			#nTr = "--transactions " + str(sim_conf["numberTransactions"])
-			#trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+			logFile = "--log_file outputs/process" + nodeId + ".txt"
 			
-			#cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " 2>&1"
-			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId  + " 2>&1"
+			if sim_conf["numberTransactions"] == -1:
+				nTr = "--stress_test true"
+				trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+			else:
+				nTr = "--transactions " + str(sim_conf["numberTransactions"])
+				trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+				
+			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " 2>&1"
+			#cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId  + " 2>&1"
 
+			
 			popens[hosts[i+1]] = hosts[i+1].popen(cmd, shell=True)
 			
 			#os.system(f"timeout 10 tcpdump -i s0-eth{i+1} -i  s0-eth{i}")
