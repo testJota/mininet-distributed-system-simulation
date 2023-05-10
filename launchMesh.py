@@ -298,6 +298,13 @@ def simpleTest(inputPath, configPath):
 			if sim_conf["numberTransactions"] == -1:
 				nTr = "--stress_test true"
 				trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+			elif sim_conf["numberTransactions"] == -2:
+				if i == 0:
+					nTr = "--stress_test true"
+					trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+				else:
+					nTr = "--transactions " + "0"
+					trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
 			else:
 				nTr = "--transactions " + str(sim_conf["numberTransactions"])
 				trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])

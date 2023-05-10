@@ -1,6 +1,6 @@
 {
     "topology": "singleTopo.json",
-    "hostBand": 10,
+    "hostBand": 8,
     "hostQueue": 10000,
     "hostDelay": "0ms",
     "hostLoss": 1,

@@ -5,25 +5,18 @@ from subprocess import call
 if __name__ == '__main__':
 	
 	protocols = ["bracha","witness","scalable"]
-	#targetThr = [2*(i+1) for i in range(64)] #
-	targetN = [32, 64, 128]
-	numberExp = 8
-	dictFiles = {32:"3", 64:"4", 128:"5"}
+	numberInputs = 5
+	numberExp = 5
 	
-	for nNodes in targetN:
-		for i in range(3):
-			for protocol in protocols:
-				inputFile = "ConfigFiles/Experiments/" + protocol + "Input" + dictFiles[nNodes] + ".json"
-				configFile = "ConfigFiles/Experiments/stress" + str(i) + ".json"
+	for i in range(numberInputs):
+		for protocol in protocols:
+			for j in range(numberExp):
+				# Latency test
+				inputFile = "ConfigFiles/Experiments/" + protocol + "Input" + str(i) + ".json"
+				configFile = "ConfigFiles/Experiments/best" + str(j) + ".json"
 				call(["python3", "launchMesh.py", inputFile, configFile])
 				
-	for nNodes in targetN:
-		step = (128//nNodes)*4
-		for _ in range(numberExp):
-			for protocol in protocols:
-				inputFile = "ConfigFiles/Experiments/" + protocol + "Input" + dictFiles[nNodes] + ".json"
-				configFile = "ConfigFiles/Experiments/config" + dictFiles[nNodes] + "_" + str(step) + ".json"
+				# Throughput test
+				inputFile = "ConfigFiles/Experiments/" + protocol + "Input" + str(i) + ".json"
+				configFile = "ConfigFiles/Experiments/stress" + str(j) + ".json"
 				call(["python3", "launchMesh.py", inputFile, configFile])
-			step += step
-				
-
