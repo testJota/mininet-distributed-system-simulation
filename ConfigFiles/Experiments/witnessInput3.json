@@ -1,10 +1,10 @@
 {
     "protocol": "reliable_accountability",
     "parameters": {
-        "n": 80,
+        "n": 96,
         "f": 0,
-        "w": 18,
-        "v": 25,
+        "w": 19,
+        "v": 26,
         "wr": 10,
         "vr": 10,
         "u": 10,

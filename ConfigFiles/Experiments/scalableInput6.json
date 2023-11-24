@@ -1,0 +1,15 @@
+{
+    "protocol": "scalable",
+    "parameters": {
+        "n": 192,
+        "f": 0,
+        "g_size": 30,
+        "e_size": 30,
+        "r_size": 30,
+        "d_size": 30,
+        "e_threshold": 21,
+        "r_threshold": 21,
+        "d_threshold": 21,
+        "clean_up_timeout": 10000000000
+    }
+}
