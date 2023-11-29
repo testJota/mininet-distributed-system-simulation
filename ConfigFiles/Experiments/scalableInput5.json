@@ -3,13 +3,13 @@
     "parameters": {
         "n": 160,
         "f": 0,
-        "g_size": 29,
-        "e_size": 29,
-        "r_size": 29,
-        "d_size": 29,
-        "e_threshold": 20,
-        "r_threshold": 20,
-        "d_threshold": 20,
+        "g_size": 73,
+        "e_size": 73,
+        "r_size": 73,
+        "d_size": 73,
+        "e_threshold": 49,
+        "r_threshold": 49,
+        "d_threshold": 49,
         "clean_up_timeout": 10000000000
     }
 }

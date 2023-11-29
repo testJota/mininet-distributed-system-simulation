@@ -7,6 +7,7 @@ from subprocess import call
 #import threading
 import json
 import sys
+import os
                                                                                              
 from mininet.topo import Topo
 from mininet.net import Mininet
@@ -14,7 +15,9 @@ from mininet.util import dumpNodeConnections
 from mininet.log import setLogLevel, info
 #from mininet.node import CPULimitedHost
 from mininet.link import TCULink
+from mininet.node import Controller, RemoteController
 from mininet.util import pmonitor
+from mininet.cli import CLI
 
 from generateTopo import generateMininetTopo
 
@@ -71,7 +74,7 @@ def simpleTest(inputPath, configPath):
 		
 	obj = json.loads(data)
 
-	numberNodes = obj['parameters']['n']
+	nHosts = obj['parameters']['n']
 
 	with open(configPath, 'r') as confFile:
 		sim_conf =  confFile.read()
@@ -88,85 +91,94 @@ def simpleTest(inputPath, configPath):
 	# parse file
 	net_topo = json.loads(net_topo)
 	
-	fullTopo = generateMininetTopo(net_topo, numberNodes+1, sim_conf["hostBand"], 
+	fullTopo = generateMininetTopo(net_topo, 32, sim_conf["hostBand"], 
 				sim_conf["hostQueue"], sim_conf["hostDelay"], sim_conf["hostLoss"])
 
 	"Create and test a simple network"
 	topo = CustomTopo(fullTopo, sim_conf["testNodes"])
-	#net = Mininet(topo, host=CPULimitedHost, link=TCLink)
-	net = Mininet(topo, link=TCULink)
+	net = Mininet(topo, link=TCULink, build=False, waitConnected=False)
+	net.addController( RemoteController( 'c0', ip='127.0.0.1', port=6633 ))
+	net.build()
 	
 	try:
 		net.start()
 		
+		switch = 's0'
+
+		for i in range(1,nHosts+1):
+			cmd = f'ovs-ofctl add-flow {switch} table=0,idle_timeout=300,priority=100,dl_type=0x0800,nw_dst=10.0.0.{i},actions=output:"{switch}-eth{i}"'
+			print(cmd)
+			os.system(cmd)
+			cmd = f'ovs-ofctl add-flow {switch} table=0,idle_timeout=300,priority=100,dl_type=0x0806,nw_dst=10.0.0.{i},actions=output:"{switch}-eth{i}"'
+			print(cmd)
+			os.system(cmd)
+
+		os.system(f"ovs-ofctl dump-flows {switch}")	
+
 		print( "Dumping switch connections" )
 		dumpNodeConnections(net.switches)
 		
 		print( "Setting up main server" )
 		hosts = net.hosts
-
+		
 		popens = {}
-		#threads = []
 
 		# server execution code
-		cmd = "./mainserver --n " + str(numberNodes) + " --log_file outputs/mainOut.txt"
-		popens[hosts[0]] = hosts[0].popen(cmd)
+		cmd = "./mainserver --n " + str(nHosts) + " --log_file outputs/mainOut.txt" + " --topo star" + " --nodes 32"
+		popens["Main"] = hosts[0].popen(cmd)
 		print(inputPath + ", " + configPath)
 
-		sleep(.1) # time to setup main server
+		sleep(1) # time to setup main server
 
 		print( "Setting up nodes" )
+		
+		clientSet = set([x for x in range(16)])
 
-		for i in range(numberNodes):
+		for i in range(nHosts):
 		
 			# node execution code
 			nodeId = str(i)
 			inputFile = "--input_file " + inputPath
-			logFile = "--log_file outputs/process" + nodeId + ".txt"	
-			nTr = "--transactions " + str(sim_conf["numberTransactions"])
-			trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+			logFile = "--log_file outputs/process" + nodeId + ".txt"
 			
-			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " 2>&1"
-
-			popens[hosts[i+1]] = hosts[i+1].popen(cmd, shell=True)
+			if sim_conf["numberTransactions"] == -1:
+				nTr = "--stress_test true"
+				trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+			elif sim_conf["numberTransactions"] == -2:
+				if i == 0:
+					nTr = "--stress_test true"
+					trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+				else:
+					nTr = "--transactions " + "0"
+					trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+			else:
+				if clientSet:
+					nTr = "--transactions " + str(sim_conf["numberTransactions"])
+					trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+					clientSet.pop()
+				else:
+					nTr = "--transactions " + "0"
+					trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
+				
+			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " --topo star" + " --nodes 32" + " 2>&1"
+			
+			#popens[hosts[i+1]] = hosts[i+1].popen(cmd, shell=True)
+			popens[str(i)] = hosts[(i) % 32].popen(cmd, shell=True)
+			
+		#CLI(net)	
 		
-		# CPU test node, allow checking if nodes are getting enough CPU time
-		#selfTest = hosts[1]
-		#selfTest.cmd("bash selfControl.sh > outputs/selfControl.txt 2>&1 &")
-		
-		offset = 0
-		hTestIn = net.get('h0')
-		hTestOut = net.get('h0')
-		if sim_conf["testNodes"]["inTestNodes"]:
-			hTestIn = net.get('h' + str(numberNodes+1))
-			hTestIn2 = net.get('h' + str(numberNodes+2))
-			hTestIn.cmd("ping " + hTestIn2.IP() + " > outputs/inControl.txt 2>&1 &")
-			offset += 2
-			
-		if sim_conf["testNodes"]["outTestNodes"]:
-			hTestOut = net.get('h' + str(numberNodes+1+offset))
-			hTestOut2 = net.get('h' + str(numberNodes+2+offset))
-			hTestOut.cmd("ping " + hTestOut2.IP() + " > outputs/outControl.txt 2>&1 &")
-			
-		print("Simulation start... ")
 		info( "Monitoring output for", sim_conf["simulationTime"], "seconds\n" )
 		endTime = time() + sim_conf["simulationTime"]
 		for h, line in pmonitor( popens, timeoutms=100 ):
 			if h:
-				info( '<%s>: %s' % ( h.name, line ) )
+				info( '<%s>: %s' % ("P" + h, line ) )
 			if time() >= endTime:
 				print("Sending termination signal...")
 				for p in popens.values():
 					p.send_signal( SIGINT )
 				break
-		#sleep(sim_conf["simulationTime"])
-		print("Simulation end... ")
 
-		#selfTest.cmd("kill %bash")
-		hTestIn.cmd("kill %ping")
-		hTestOut.cmd("kill %ping")
-		#for p in popens.values():
-		#	p.send_signal(SIGINT)
+		info("Simulation end... ")
 		
 		net.stop()
 		
@@ -175,25 +187,19 @@ def simpleTest(inputPath, configPath):
 		call("sudo pkill -f mainserver", shell = True)
 		call(["mn","-c"])
 		
-		print("Compressing outputs...")
+		info("Compressing outputs...")
 		firstName = inputPath.split("/")[-1]
 		lastName = configPath.split("/")[-1]
 		fileName = "outputs/compressed/" + firstName.split(".")[0] + lastName.split(".")[0] + ".tar.gz"
 		listFiles = ["tar","-czf",fileName,"outputs/mainOut.txt"]
-		if sim_conf["testNodes"]["inTestNodes"]:
-			listFiles.append("outputs/inControl.txt")
-		if sim_conf["testNodes"]["outTestNodes"]:
-			listFiles.append("outputs/outControl.txt")
-		listFiles.append("outputs/selfControl.txt")
 			
-		for i in range(numberNodes):
+		for i in range(nHosts):
 			listFiles.append(f"outputs/process{i}.txt")
 			
 		# Compressing files
 		call(listFiles)
-
-	
-		print("The end")
+		
+		info("The end \n")
 
 if __name__ == '__main__':
 	"""

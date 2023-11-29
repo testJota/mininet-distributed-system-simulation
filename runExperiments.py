@@ -28,4 +28,4 @@ if __name__ == '__main__':
 					# Main test
 				inputFile = "ConfigFiles/Experiments/" + protocol + "Input" + str(i) + ".json"
 				configFile = "ConfigFiles/Experiments/config16_" + str(th) + ".json"
-				call(["python3", "launchFinal.py", inputFile, configFile])
+				call(["python3", "launch.py", inputFile, configFile])
