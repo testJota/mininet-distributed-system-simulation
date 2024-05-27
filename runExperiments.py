@@ -13,7 +13,7 @@ if __name__ == '__main__':
 	targetThr = [math.ceil(2**((i+6)/3)) for i in range(22)]
 	
 	for th in targetThr:
-		for i in range(1,numberInputs):
+		for i in range(numberInputs):
 			for protocol in protocols:
 				#for j in range(numberExp):
 					# Latency test
