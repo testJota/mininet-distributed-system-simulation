@@ -13,5 +13,5 @@
     "simulationTime": 300,
     "numberTransactions": 121,
     "transactionDelay": 1230769230,
-    "mixingTime": 1950
+    "mixingTime": 72800
 }
