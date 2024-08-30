@@ -2,14 +2,14 @@
     "protocol": "scalable",
     "parameters": {
         "n": 192,
-        "f": 63,
-        "g_size": 60,
-        "e_size": 60,
-        "r_size": 60,
-        "d_size": 60,
-        "e_threshold": 41,
-        "r_threshold": 41,
-        "d_threshold": 41,
+        "f": 0,
+        "g_size": 37,
+        "e_size": 37,
+        "r_size": 37,
+        "d_size": 37,
+        "e_threshold": 19,
+        "r_threshold": 19,
+        "d_threshold": 19,
         "clean_up_timeout": 10000000000
     }
 }

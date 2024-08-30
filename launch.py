@@ -132,7 +132,7 @@ def simpleTest(inputPath, configPath):
 
 		print( "Setting up nodes" )
 		
-		clientSet = set([x for x in range(16)])
+		clientSet = set([x for x in range(nHosts)])
 
 		for i in range(nHosts):
 		
@@ -161,7 +161,10 @@ def simpleTest(inputPath, configPath):
 					trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
 				
 			#cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " --topo star" + " --nodes 32" + " 2>&1"
-			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " --keys_dir ./keys" + " --topo star" + " --mixing_time " + str(sim_conf["mixingTime"]) + " " + trDelay + " --nodes 32" + " 2>&1"
+			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " --keys_dir ./keys" + " --topo star" + " --mixing_time " + str(sim_conf["mixingTime"]) + " " + trDelay + " --nodes 32" + " --stress_test true" + " 2>&1"
+			#cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " --keys_dir ./keys" + " --topo star" + " --mixing_time " + str(sim_conf["mixingTime"]) + " " + trDelay + " --nodes 32" + " 2>&1"
+			
+			#print(cmd)
 			
 			#popens[hosts[i+1]] = hosts[i+1].popen(cmd, shell=True)
 			popens[str(i)] = hosts[(i) % 32].popen(cmd, shell=True)
