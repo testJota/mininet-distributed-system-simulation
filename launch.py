@@ -66,6 +66,8 @@ class CustomTopo(Topo):
 		
 def simpleTest(inputPath, configPath):
 
+	n_Nodes = 16
+
 	call(["mn","-c"])
 	
 	# Read input file
@@ -91,7 +93,7 @@ def simpleTest(inputPath, configPath):
 	# parse file
 	net_topo = json.loads(net_topo)
 	
-	fullTopo = generateMininetTopo(net_topo, 32, sim_conf["hostBand"], 
+	fullTopo = generateMininetTopo(net_topo, n_Nodes, sim_conf["hostBand"], 
 				sim_conf["hostQueue"], sim_conf["hostDelay"], sim_conf["hostLoss"])
 
 	"Create and test a simple network"
@@ -105,11 +107,11 @@ def simpleTest(inputPath, configPath):
 		
 		switch = 's0'
 
-		for i in range(1,nHosts+1):
-			cmd = f'ovs-ofctl add-flow {switch} table=0,idle_timeout=300,priority=100,dl_type=0x0800,nw_dst=10.0.0.{i},actions=output:"{switch}-eth{i}"'
+		for i in range(1,n_Nodes+1):
+			cmd = f'ovs-ofctl add-flow {switch} table=0,idle_timeout=600,priority=100,dl_type=0x0800,nw_dst=10.0.0.{i},actions=output:"{switch}-eth{i}"'
 			print(cmd)
 			os.system(cmd)
-			cmd = f'ovs-ofctl add-flow {switch} table=0,idle_timeout=300,priority=100,dl_type=0x0806,nw_dst=10.0.0.{i},actions=output:"{switch}-eth{i}"'
+			cmd = f'ovs-ofctl add-flow {switch} table=0,idle_timeout=600,priority=100,dl_type=0x0806,nw_dst=10.0.0.{i},actions=output:"{switch}-eth{i}"'
 			print(cmd)
 			os.system(cmd)
 
@@ -124,7 +126,7 @@ def simpleTest(inputPath, configPath):
 		popens = {}
 
 		# server execution code
-		cmd = "./mainserver --n " + str(nHosts) + " --log_file outputs/mainOut.txt" + " --topo star" + " --nodes 32"
+		cmd = "./mainserver --n " + str(nHosts) + " --log_file outputs/mainOut.txt" + " --topo star" + " --nodes " + str(n_Nodes)
 		popens["Main"] = hosts[0].popen(cmd)
 		print(inputPath + ", " + configPath)
 
@@ -161,13 +163,13 @@ def simpleTest(inputPath, configPath):
 					trDelay = "--transaction_init_timeout_ns " + str(sim_conf["transactionDelay"])
 				
 			#cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " " + trDelay + " --topo star" + " --nodes 32" + " 2>&1"
-			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " --keys_dir ./keys" + " --topo star" + " --mixing_time " + str(sim_conf["mixingTime"]) + " " + trDelay + " --nodes 32" + " --stress_test true" + " 2>&1"
+			cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " --keys_dir ./keys" + " --topo star" + " --mixing_time " + str(sim_conf["mixingTime"]) + " " + trDelay + " --nodes " + str(n_Nodes) + " --stress_test true" + " 2>&1"
 			#cmd = "./node " + inputFile + " " + logFile + " --i " + nodeId + " " + nTr + " --keys_dir ./keys" + " --topo star" + " --mixing_time " + str(sim_conf["mixingTime"]) + " " + trDelay + " --nodes 32" + " 2>&1"
 			
 			#print(cmd)
 			
 			#popens[hosts[i+1]] = hosts[i+1].popen(cmd, shell=True)
-			popens[str(i)] = hosts[(i) % 32].popen(cmd, shell=True)
+			popens[str(i)] = hosts[(i) % n_Nodes].popen(cmd, shell=True)
 			
 		#CLI(net)	
 		
