@@ -2,7 +2,7 @@
     "protocol": "scalable",
     "parameters": {
         "n": 224,
-        "f": 0,
+        "f": 74,
         "g_size": 39,
         "e_size": 39,
         "r_size": 39,

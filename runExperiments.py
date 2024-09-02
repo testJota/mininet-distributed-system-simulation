@@ -8,15 +8,15 @@ if __name__ == '__main__':
 	protocols = ["bracha","witness","scalable"]
 	#protocols = ["bracha","scalable"]
 	numberInputs = 8
-	numberExp = 1
+	numberExp = 5
 	
 	#targetThr = [math.ceil(2**((i+6)/3)) for i in range(22)]
 	targetThr = [0]
 	
 	for th in targetThr:
 		for i in range(numberInputs):
-			for protocol in protocols:
-				for j in range(numberExp):
+			for j in range(numberExp):
+				for protocol in protocols:
 					# Latency test
 					#inputFile = "ConfigFiles/Experiments/" + protocol + "Input" + str(i) + ".json"
 					#configFile = "ConfigFiles/Experiments/best" + str(j) + ".json"

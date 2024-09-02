@@ -2,14 +2,14 @@
     "protocol": "reliable_accountability",
     "parameters": {
         "n": 160,
-        "f": 0,
+        "f": 53,
         "w": 10,
         "v": 14,
         "wr": 10,
         "vr": 10,
         "u": 5,
-        "recovery_timeout": 60000000000,
-        "node_id_size": 44,
+        "recovery_timeout": 600000000000,
+        "node_id_size": 48,
         "number_of_bins": 4
     }
 }
