@@ -8,7 +8,7 @@ if __name__ == '__main__':
 	protocols = ["bracha","witness","scalable"]
 	#protocols = ["bracha","scalable"]
 	numberInputs = 8
-	numberExp = 5
+	numberExp = 1
 	
 	#targetThr = [math.ceil(2**((i+6)/3)) for i in range(22)]
 	targetThr = [0]
