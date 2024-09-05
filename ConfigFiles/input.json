@@ -1,7 +1,15 @@
 {
-    "protocol": "bracha",
+    "protocol": "scalable",
     "parameters": {
         "n": 64,
-        "f": 21
+        "f": 21,
+        "g_size": 30,
+        "e_size": 30,
+        "r_size": 30,
+        "d_size": 30,
+        "e_threshold": 16,
+        "r_threshold": 16,
+        "d_threshold": 16,
+        "clean_up_timeout": 10000000000
     }
 }
