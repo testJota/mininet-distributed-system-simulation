@@ -9,7 +9,7 @@
         "vr": 10,
         "u": 7,
         "recovery_timeout": 600000000000,
-        "node_id_size": 48,
+        "node_id_size": 40,
         "number_of_bins": 4
     }
 }
